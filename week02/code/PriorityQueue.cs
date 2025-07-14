@@ -28,10 +28,13 @@
         {
             if (_queue[index].Priority >= _queue[highPriorityIndex].Priority)
                 highPriorityIndex = index;
+            else if (_queue[index].Priority == _queue[highPriorityIndex].Priority && index < highPriorityIndex)
+                highPriorityIndex = index;
         }
 
         // Remove and return the item with the highest priority
         var value = _queue[highPriorityIndex].Value;
+        _queue.RemoveAt(highPriorityIndex);
         return value;
     }
 
