@@ -21,8 +21,22 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var seen = new HashSet<string>();
+        var pairs = new List<string>();
+
+        foreach (var word in words)
+        {
+            char[] chars = word.ToCharArray();
+            Array.Reverse(chars);
+            string reverse = new string(chars);
+            if (seen.Contains(reverse) && word[0] != word[1]) // Avoid self-match (e.g., "aa")
+            {
+                pairs.Add($"{word} & {reverse}");
+            }
+            seen.Add(word);
+        }
+
+        return pairs.ToArray();
     }
 
     /// <summary>
@@ -42,7 +56,11 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            string degree = fields[4];
+            if (degrees.ContainsKey(degree))
+                degrees[degree]++;
+            else
+                degrees[degree] = 1;
         }
 
         return degrees;
@@ -66,8 +84,30 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        var dict1 = new Dictionary<char, int>();
+        var dict2 = new Dictionary<char, int>();
+
+        // Process word1
+        string clean1 = word1.Replace(" ", "").ToLower();
+        foreach (char c in clean1)
+        {
+            if (dict1.ContainsKey(c))
+                dict1[c]++;
+            else
+                dict1[c] = 1;
+        }
+
+        // Process word2
+        string clean2 = word2.Replace(" ", "").ToLower();
+        foreach (char c in clean2)
+        {
+            if (dict2.ContainsKey(c))
+                dict2[c]++;
+            else
+                dict2[c] = 1;
+        }
+
+        return dict1.Count == dict2.Count && dict1.All(kvp => dict2.ContainsKey(kvp.Key) && dict2[kvp.Key] == kvp.Value);
     }
 
     /// <summary>
@@ -96,11 +136,12 @@ public static class SetsAndMaps
 
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
 
-        // TODO Problem 5:
-        // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
-        // on those classes so that the call to Deserialize above works properly.
-        // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
-        // 3. Return an array of these string descriptions.
-        return [];
+        var results = new List<string>();
+        foreach (var feature in featureCollection.Features)
+        {
+            results.Add($"{feature.Properties.Place} - Mag {feature.Properties.Mag}");
+        }
+
+        return results.ToArray();
     }
 }
